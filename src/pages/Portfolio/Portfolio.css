@@ -1,0 +1,131 @@
+.portfolio-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.portfolio-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.portfolio-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.portfolio-mid-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 24px;
+}
+
+.card-top-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.card-top-title h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.allocation-card, .transactions-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.transactions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tx-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: all 0.15s ease;
+}
+
+.tx-item:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-color);
+}
+
+.tx-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tx-icon-bubble {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tx-icon-bubble.bought {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+}
+
+.tx-icon-bubble.sold {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+.tx-name {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.tx-date {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.tx-right {
+  text-align: right;
+}
+
+.tx-total {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.tx-amount {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.holdings-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+@media (max-width: 1024px) {
+  .portfolio-stats-grid {
+    grid-template-columns: 1fr;
+  }
+  .portfolio-mid-grid {
+    grid-template-columns: 1fr;
+  }
+}
+

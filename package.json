@@ -1,0 +1,45 @@
+{
+  "name": "cryptoplace",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently -n \"frontend,backend\" -c \"cyan,magenta\" \"vite\" \"npm run dev --prefix backend\"",
+    "dev:frontend": "vite",
+    "dev:backend": "npm run dev --prefix backend",
+    "build": "vite build && npm run build --prefix backend",
+    "build:frontend": "vite build",
+    "build:backend": "npm run build --prefix backend",
+    "test": "npm run test --prefix backend",
+    "test:backend": "npm run test --prefix backend",
+    "test:frontend": "vitest run",
+    "test:all": "npm run test:frontend && npm run test:backend",
+    "prisma:studio": "npx prisma studio --schema backend/prisma/schema.prisma",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "lucide-react": "^1.58.0",
+    "nodemon": "^3.1.14",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-google-charts": "^5.2.1",
+    "react-router-dom": "^7.13.2"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.4",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "concurrently": "^9.1.2",
+    "eslint": "^9.39.4",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.5.2",
+    "globals": "^17.4.0",
+    "jsdom": "^29.1.1",
+    "vite": "^8.0.1",
+    "vitest": "^5.0.5"
+  }
+}

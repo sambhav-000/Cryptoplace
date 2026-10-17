@@ -1,0 +1,124 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum TransactionType {
+  BUY
+  SELL
+}
+
+enum AlertCondition {
+  ABOVE
+  BELOW
+}
+
+enum AlertStatus {
+  ACTIVE
+  TRIGGERED
+  DISABLED
+}
+
+model User {
+  id           String         @id @default(uuid())
+  name         String
+  email        String         @unique
+  passwordHash String
+  avatar       String?        @default("https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=faces")
+  role         String         @default("USER")
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  refreshTokens RefreshToken[]
+  watchlist     WatchlistEntry[]
+  transactions  Transaction[]
+  alerts        PriceAlert[]
+  settings      UserSettings?
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@map("refresh_tokens")
+}
+
+model WatchlistEntry {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  coinId    String
+  symbol    String
+  name      String
+  addedAt   DateTime @default(now())
+
+  @@unique([userId, coinId])
+  @@index([userId])
+  @@map("watchlist_entries")
+}
+
+model Transaction {
+  id           String          @id @default(uuid())
+  userId       String
+  user         User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  coinId       String
+  symbol       String
+  coinName     String
+  type         TransactionType
+  amount       Decimal         @db.Decimal(24, 8)
+  pricePerCoin Decimal         @db.Decimal(24, 8)
+  totalValue   Decimal         @db.Decimal(24, 4)
+  fee          Decimal         @default(0) @db.Decimal(12, 4)
+  notes        String?
+  date         DateTime        @default(now())
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  @@index([userId])
+  @@index([coinId])
+  @@map("portfolio_transactions")
+}
+
+model PriceAlert {
+  id              String         @id @default(uuid())
+  userId          String
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  coinId          String
+  symbol          String
+  coinName        String
+  condition       AlertCondition
+  targetPrice     Decimal        @db.Decimal(24, 8)
+  status          AlertStatus    @default(ACTIVE)
+  lastTriggeredAt DateTime?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@index([userId])
+  @@index([coinId, status])
+  @@map("price_alerts")
+}
+
+model UserSettings {
+  id                String   @id @default(uuid())
+  userId            String   @unique
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  preferredCurrency String   @default("usd")
+  darkMode          Boolean  @default(true)
+  emailAlerts       Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("user_settings")
+}
+

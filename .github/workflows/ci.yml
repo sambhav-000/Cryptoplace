@@ -1,0 +1,74 @@
+name: CryptoPlace Pro CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test-and-build:
+    name: Build & Test Full Stack
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgrespassword
+          POSTGRES_DB: cryptoplace_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Frontend Dependencies
+        run: npm ci
+
+      - name: Run Frontend Vitest Test Suite
+        run: npm run test:frontend
+
+      - name: Build Frontend Application
+        run: npm run build:frontend
+
+      - name: Install Backend Dependencies
+        working-directory: ./backend
+        run: npm ci
+
+      - name: Generate Prisma Client
+        working-directory: ./backend
+        run: npx prisma generate
+        env:
+          DATABASE_URL: "postgresql://postgres:postgrespassword@localhost:5432/cryptoplace_test?schema=public"
+
+      - name: Push Database Schema
+        working-directory: ./backend
+        run: npx prisma db push
+        env:
+          DATABASE_URL: "postgresql://postgres:postgrespassword@localhost:5432/cryptoplace_test?schema=public"
+
+      - name: Run Backend Vitest Test Suite
+        working-directory: ./backend
+        run: npm test
+        env:
+          DATABASE_URL: "postgresql://postgres:postgrespassword@localhost:5432/cryptoplace_test?schema=public"
+          JWT_SECRET: "ci_test_jwt_secret_key"
+
+      - name: Build Backend Application
+        working-directory: ./backend
+        run: npm run build
+
